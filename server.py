@@ -9,6 +9,7 @@ app = Flask("Emotion Detection")
 
 @app.route("/emotionDetector")
 def sent_detection():
+    """Return the emotion detector values obtained from IBM Watson."""
     # Retrieve the text to analyze from the request arguments
     text_to_analyze = request.args.get('textToAnalyze')
 
@@ -16,19 +17,19 @@ def sent_detection():
     response = emotion_detector(text_to_analyze)
 
     # Check if the response is None, indicating an error or invalid input
-    if response is None:
-        return "Invalid input! Try again."
-    else:
-        # Return a formatted string with the emotions and scores with the dominant emotion
-        return "For the given statement, the system response is \
-                'anger': {}, 'disgust': {}, 'fear': {}, 'joy': {}, and 'sadness': {} \
-                The dominant emotion is {}"\
-                .format(response['anger'], response['disgust'],\
-                response['fear'], response['joy'], response['sadness'],\
-                response['dominant_emotion'])
+    if response['dominant_emotion'] is None:
+        return "Invalid text! Please try again."
+
+    # Return a formatted string with the emotions and scores with the dominant emotion
+    return f"For the given statement, the system response is \
+           'anger': {response['anger']}, 'disgust': {response['disgust']},\
+           'fear': {response['fear']}, 'joy': {response['joy']},\
+           and 'sadness': {response['sadness']} \
+           The dominant emotion is {response['dominant_emotion']}"
 
 @app.route("/")
 def render_index_page():
+    """ Show index.html."""
     return render_template('index.html')
 
 if __name__ == "__main__":
